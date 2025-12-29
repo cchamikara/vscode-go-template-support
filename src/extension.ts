@@ -1,4 +1,10 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import { SchemaParser } from './lsp/schemaParser';
+import { ContextAnalyzer } from './lsp/contextAnalyzer';
+import { KrakenDCompletionProvider } from './lsp/krakenDCompletionProvider';
+import { KrakenDHoverProvider } from './lsp/krakenDHoverProvider';
+import { KrakenDDiagnosticsProvider } from './lsp/krakenDDiagnosticsProvider';
 
 // Built-in Go template functions and keywords
 const TEMPLATE_KEYWORDS = [
@@ -420,18 +426,62 @@ export function activate(context: vscode.ExtensionContext) {
     scheme: 'file'
   };
 
-  // Register completion provider
+  // Initialize KrakenD schema-based providers
+  const schemaPath = path.join(context.extensionPath, 'src/lsp/kraiendSchema.json');
+  const schemaParser = new SchemaParser(schemaPath);
+  const contextAnalyzer = new ContextAnalyzer();
+
+  // KrakenD schema-based completion provider - REGISTER FIRST with higher priority
+  const krakenDCompletionProvider = vscode.languages.registerCompletionItemProvider(
+    documentSelector,
+    new KrakenDCompletionProvider(schemaParser, contextAnalyzer),
+    '.', ' '  // Trigger on dot and space
+  );
+
+  // Register original completion provider (for Sprig functions and keywords) - LOWER priority
   const completionProvider = vscode.languages.registerCompletionItemProvider(
     documentSelector,
     new GoTemplateCompletionProvider(),
     '{', ' ', '.'
   );
 
-  // Register hover provider
+  const krakenDHoverProvider = vscode.languages.registerHoverProvider(
+    documentSelector,
+    new KrakenDHoverProvider(schemaParser, contextAnalyzer)
+  );
+
+  // Register hover provider (for keywords and Sprig functions)
   const hoverProvider = vscode.languages.registerHoverProvider(
     documentSelector,
     new GoTemplateHoverProvider()
   );
+
+  const krakenDDiagnostics = new KrakenDDiagnosticsProvider(schemaParser, contextAnalyzer);
+
+  // Update diagnostics on document change
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument(event => {
+      if (event.document.languageId === 'gotmpl') {
+        krakenDDiagnostics.updateDiagnostics(event.document);
+      }
+    })
+  );
+
+  // Update diagnostics on document open
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument(document => {
+      if (document.languageId === 'gotmpl') {
+        krakenDDiagnostics.updateDiagnostics(document);
+      }
+    })
+  );
+
+  // Update diagnostics for already open documents
+  vscode.workspace.textDocuments.forEach(document => {
+    if (document.languageId === 'gotmpl') {
+      krakenDDiagnostics.updateDiagnostics(document);
+    }
+  });
 
   // Register formatting provider
   const formattingProvider = vscode.languages.registerDocumentFormattingEditProvider(
@@ -439,7 +489,14 @@ export function activate(context: vscode.ExtensionContext) {
     new GoTemplateFormattingProvider()
   );
 
-  context.subscriptions.push(completionProvider, hoverProvider, formattingProvider);
+  context.subscriptions.push(
+    krakenDCompletionProvider,  // KrakenD schema fields - FIRST (highest priority)
+    completionProvider,         // Sprig/keywords - SECOND
+    krakenDHoverProvider,       // KrakenD hover - FIRST
+    hoverProvider,              // Generic hover - SECOND
+    krakenDDiagnostics,
+    formattingProvider
+  );
 }
 
 export function deactivate() { }

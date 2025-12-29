@@ -7,7 +7,16 @@
     "vscode": "^1.106.0"
   },
   "categories": [
+    "Programming Languages",
+    "Formatters",
     "Other"
+  ],
+  "keywords": [
+    "go",
+    "golang",
+    "template",
+    "gotmpl",
+    "tmpl"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",

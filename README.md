@@ -1,71 +1,217 @@
-# go-template-support README
+# Go Template Support
 
-This is the README for your extension "go-template-support". After writing up a brief description, we recommend including the following sections.
+A VS Code / Cursor extension that provides comprehensive support for Go template files (`.gotmpl`, `.tmpl`, `.tpl`).
+
+## 🎉 New: KrakenD LSP Features
+
+**Schema-based IntelliSense for KrakenD templates!**
+
+- ✅ **Smart field autocomplete** - Context-aware suggestions from KrakenD schema
+- ✅ **Hover documentation** - Instant field reference with types and defaults
+- ✅ **Real-time validation** - Catch invalid fields and enum values as you type
+- ✅ **Custom field mapping** - Supports your `endpoint_*` and `backend_*` prefixes
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### 🎨 Syntax Highlighting
 
-For example if there is an image subfolder under your extension project workspace:
+- Full syntax highlighting for Go template syntax
+- Highlights template delimiters `{{ }}`, `{{- -}}`
+- Distinct colors for:
+  - Control keywords (`if`, `else`, `end`, `with`, `range`, `define`, `template`, `block`)
+  - Built-in functions (`printf`, `index`, `len`, `eq`, `ne`, etc.)
+  - Variables (`$variable`, `.field`)
+  - Strings, numbers, and operators
+  - Comments `{{/* comment */}}`
 
-\!\[feature X\]\(images/feature-x.png\)
+### 💡 IntelliSense & Autocomplete
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Auto-completion for:
+  - Go template control keywords
+  - Built-in template functions
+  - **70+ Sprig functions** with documentation (see [Sprig docs](https://masterminds.github.io/sprig/))
+  - Variables and fields
+- Triggered automatically when typing inside `{{ }}`
 
-## Requirements
+### 📖 Hover Documentation
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Hover over keywords and functions to see documentation
+- Quick reference for function syntax and usage
 
-## Extension Settings
+### ✨ Code Formatting
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- Basic formatting for template actions
+- Ensures proper spacing around template delimiters
+- Consistent spacing after control keywords
 
-For example:
+### 📝 Code Snippets
 
-This extension contributes the following settings:
+- Quick snippets for common patterns:
+  - `if` - If statement
+  - `ifelse` - If-else statement
+  - `range` - Range loop
+  - `with` - With statement
+  - `define` - Define template
+  - `template` - Execute template
+  - `var` - Variable assignment
+  - And many more!
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+### 🔧 Language Features
 
-## Known Issues
+- Auto-closing pairs for `{{ }}`
+- Block comments with `{{/* */}}`
+- Code folding for `define`, `block`, `if`, `with`, `range` blocks
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Installation
 
-## Release Notes
+### From Source
 
-Users appreciate release notes as you update your extension.
+1. Clone this repository
+2. Run `npm install` to install dependencies
+3. Run `npm run compile` to build the extension
+4. Press `F5` to open a new VS Code window with the extension loaded
 
-### 1.0.0
+### From VSIX
 
-Initial release of ...
+1. Build the extension: `npm run package`
+2. Install the `.vsix` file: `code --install-extension go-template-support-0.0.1.vsix`
 
-### 1.0.1
+## Usage
 
-Fixed issue #.
+1. Open any file with `.gotmpl`, `.tmpl`, or `.tpl` extension
+2. The extension will automatically activate and provide syntax highlighting
+3. Start typing `{{` to trigger autocomplete
+4. Hover over keywords for documentation
+5. Use `Format Document` command to format your template
 
-### 1.1.0
+## Examples
 
-Added features X, Y, and Z.
+### Control Structures
 
----
+```gotmpl
+{{ define "BaseEndpoints" }}
+  {{ $root := . }}
+  {{ range $entityName, $entity := .endpoints }}
+    {{ range $groupName, $group := $entity }}
+      {{ range $endpoint := $group.endpoints }}
+        {{ $prefix := "" }}
+        {
+          "endpoint": "{{ $prefix }}{{ $endpoint.endpoint_url }}",
+          "method": "{{ $endpoint.method }}",
+          "output_encoding": "{{ $endpoint.endpoint_output_encoding }}"
+        }
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+```
 
-## Following extension guidelines
+### Functions
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+```gotmpl
+{{ if ne $endpoint.endpoint_timeout nil }}
+  "timeout": "{{ $endpoint.endpoint_timeout }}"
+{{ else }}
+  "timeout": "5000ms"
+{{ end }}
+```
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## Supported Syntax
 
-## Working with Markdown
+### Control Keywords
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+`if`, `else`, `end`, `with`, `range`, `define`, `template`, `block`, `break`, `continue`
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+### Built-in Functions
 
-## For more information
+`and`, `call`, `html`, `index`, `slice`, `js`, `len`, `not`, `or`, `print`, `printf`, `println`, `urlquery`, `eq`, `ne`, `lt`, `le`, `gt`, `ge`
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+### Sprig Functions (70+)
 
-**Enjoy!**
+Full support for all [Sprig template functions](https://masterminds.github.io/sprig/)!
+
+**String Functions:** `trim`, `upper`, `lower`, `title`, `repeat`, `wrap`, `quote`, `cat`, `indent`, `replace`, `split`, `join`, `contains`, `hasPrefix`, `hasSuffix`, and more
+
+**Math Functions:** `add`, `sub`, `mul`, `div`, `mod`, `max`, `min`, `ceil`, `floor`, `round`
+
+**Date Functions:** `now`, `date`, `dateInZone`, `ago`, `dateModify`, `unixEpoch`
+
+**Data Encoding:** `toJson`, `toPrettyJson`, `fromJson`, `toYaml`, `fromYaml`, `toToml`, `fromToml`, `b64enc`, `b64dec`
+
+**Lists:** `list`, `first`, `last`, `rest`, `append`, `prepend`, `concat`, `reverse`, `uniq`, `sortAlpha`
+
+**Dicts:** `dict`, `get`, `set`, `hasKey`, `keys`, `values`, `pick`, `omit`, `merge`, `deepCopy`
+
+**And many more:** Type conversion, paths, UUIDs, crypto, semver, reflection, and more!
+
+📖 See [SPRIG_SUPPORT.md](SPRIG_SUPPORT.md) for complete Sprig function documentation.
+
+## Supported File Extensions
+
+- `.gotmpl` - Go Template files
+- `.tmpl` - Template files
+- `.tpl` - Template files
+
+## Configuration
+
+The extension works out of the box with sensible defaults. You can customize editor behavior in your VS Code settings:
+
+```json
+{
+  "[gotmpl]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true
+  }
+}
+```
+
+### Custom Color Theme
+
+For better syntax highlighting that matches the style shown in the screenshot, you can customize the colors in your `settings.json`. See `recommended-settings.json` for a complete configuration example.
+
+Example color customization:
+
+```json
+{
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "keyword.control.gotmpl",
+        "settings": {
+          "foreground": "#c792ea",
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "support.function.builtin.gotmpl",
+        "settings": {
+          "foreground": "#82aaff"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Snippets
+
+The extension includes many helpful snippets. Just type the prefix and press Tab:
+
+- `if` → If statement
+- `range` → Range loop
+- `define` → Define template
+- `var` → Variable assignment
+- `template` → Execute template
+- And more!
+
+## Configuration
+
+- Formatting is basic and focuses on consistent spacing
+- Context-specific variables are not currently analyzed
+- Custom function definitions are not parsed from external files
+
+## License
+
+MIT
+
