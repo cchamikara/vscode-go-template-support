@@ -144,8 +144,6 @@ Full support for all [Sprig template functions](https://masterminds.github.io/sp
 
 **And many more:** Type conversion, paths, UUIDs, crypto, semver, reflection, and more!
 
-📖 See [SPRIG_SUPPORT.md](SPRIG_SUPPORT.md) for complete Sprig function documentation.
-
 ## Supported File Extensions
 
 - `.gotmpl` - Go Template files

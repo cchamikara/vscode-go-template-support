@@ -1,10 +1,15 @@
 {
   "name": "go-template-support",
-  "displayName": "go-template-support",
+  "displayName": "Go Template Support",
   "description": "Syntax highlighting, formatting, and autocomplete for Go templates",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "publisher": "chamal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cchamikara/vscode-go-template-support"
+  },
   "engines": {
-    "vscode": "^1.106.0"
+    "vscode": "^1.100.0"
   },
   "categories": [
     "Programming Languages",
@@ -67,10 +72,11 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package"
   },
   "devDependencies": {
-    "@types/vscode": "^1.106.0",
+    "@types/vscode": "^1.100.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "typescript-eslint": "^8.48.1",
