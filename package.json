@@ -62,7 +62,8 @@
           "other": true,
           "comments": false,
           "strings": true
-        }
+        },
+        "editor.wordBasedSuggestions": "off"
       }
     }
   },
