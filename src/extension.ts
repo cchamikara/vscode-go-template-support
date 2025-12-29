@@ -427,7 +427,7 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   // Initialize KrakenD schema-based providers
-  const schemaPath = path.join(context.extensionPath, 'src/lsp/kraiendSchema.json');
+  const schemaPath = path.join(context.extensionPath, 'krakendSchema.json');
   const schemaParser = new SchemaParser(schemaPath);
   const contextAnalyzer = new ContextAnalyzer();
 
@@ -500,3 +500,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() { }
+
