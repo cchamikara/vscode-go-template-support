@@ -1,0 +1,207 @@
+{
+  "Go Template Action": {
+    "prefix": "tpl",
+    "body": [
+      "{{ ${1:expression} }}"
+    ],
+    "description": "Basic template action"
+  },
+  "Go Template If": {
+    "prefix": "if",
+    "body": [
+      "{{ if ${1:condition} }}",
+      "\t${2:content}",
+      "{{ end }}"
+    ],
+    "description": "If statement"
+  },
+  "Go Template If-Else": {
+    "prefix": "ifelse",
+    "body": [
+      "{{ if ${1:condition} }}",
+      "\t${2:true-content}",
+      "{{ else }}",
+      "\t${3:false-content}",
+      "{{ end }}"
+    ],
+    "description": "If-else statement"
+  },
+  "Go Template Range": {
+    "prefix": "range",
+    "body": [
+      "{{ range ${1:\\$item} := ${2:collection} }}",
+      "\t${3:content}",
+      "{{ end }}"
+    ],
+    "description": "Range loop"
+  },
+  "Go Template Range Index": {
+    "prefix": "rangei",
+    "body": [
+      "{{ range ${1:\\$index}, ${2:\\$item} := ${3:collection} }}",
+      "\t${4:content}",
+      "{{ end }}"
+    ],
+    "description": "Range loop with index"
+  },
+  "Go Template With": {
+    "prefix": "with",
+    "body": [
+      "{{ with ${1:value} }}",
+      "\t${2:content}",
+      "{{ end }}"
+    ],
+    "description": "With statement"
+  },
+  "Go Template Define": {
+    "prefix": "define",
+    "body": [
+      "{{ define \"${1:name}\" }}",
+      "\t${2:content}",
+      "{{ end }}"
+    ],
+    "description": "Define a template"
+  },
+  "Go Template Template": {
+    "prefix": "template",
+    "body": [
+      "{{ template \"${1:name}\" ${2:.} }}"
+    ],
+    "description": "Execute a template"
+  },
+  "Go Template Block": {
+    "prefix": "block",
+    "body": [
+      "{{ block \"${1:name}\" ${2:.} }}",
+      "\t${3:default-content}",
+      "{{ end }}"
+    ],
+    "description": "Define and execute a template block"
+  },
+  "Go Template Variable Assignment": {
+    "prefix": "var",
+    "body": [
+      "{{ \\$${1:name} := ${2:value} }}"
+    ],
+    "description": "Variable assignment"
+  },
+  "Go Template Comment": {
+    "prefix": "comment",
+    "body": [
+      "{{/* ${1:comment} */}}"
+    ],
+    "description": "Block comment"
+  },
+  "Go Template Dict": {
+    "prefix": "dict",
+    "body": [
+      "dict \"${1:key}\" ${2:value}"
+    ],
+    "description": "Create a dictionary"
+  },
+  "Go Template Printf": {
+    "prefix": "printf",
+    "body": [
+      "{{ printf \"${1:%s}\" ${2:args} }}"
+    ],
+    "description": "Format and print"
+  },
+  "Go Template Comparison": {
+    "prefix": "eq",
+    "body": [
+      "{{ ${1|eq,ne,lt,le,gt,ge|} ${2:arg1} ${3:arg2} }}"
+    ],
+    "description": "Comparison operation"
+  },
+  "Sprig Default": {
+    "prefix": "default",
+    "body": [
+      "{{ default \"${1:default-value}\" ${2:.value} }}"
+    ],
+    "description": "Set default value if empty"
+  },
+  "Sprig ToJson": {
+    "prefix": "tojson",
+    "body": [
+      "{{ ${1:.data} | toJson }}"
+    ],
+    "description": "Convert to JSON"
+  },
+  "Sprig ToYaml": {
+    "prefix": "toyaml",
+    "body": [
+      "{{ ${1:.data} | toYaml }}"
+    ],
+    "description": "Convert to YAML"
+  },
+  "Sprig Upper": {
+    "prefix": "upper",
+    "body": [
+      "{{ ${1:.value} | upper }}"
+    ],
+    "description": "Convert to uppercase"
+  },
+  "Sprig Lower": {
+    "prefix": "lower",
+    "body": [
+      "{{ ${1:.value} | lower }}"
+    ],
+    "description": "Convert to lowercase"
+  },
+  "Sprig Trim": {
+    "prefix": "trim",
+    "body": [
+      "{{ ${1:.value} | trim }}"
+    ],
+    "description": "Trim whitespace"
+  },
+  "Sprig Join": {
+    "prefix": "join",
+    "body": [
+      "{{ ${1:.list} | join \"${2:,}\" }}"
+    ],
+    "description": "Join list elements"
+  },
+  "Sprig Split": {
+    "prefix": "split",
+    "body": [
+      "{{ ${1:.string} | split \"${2:,}\" }}"
+    ],
+    "description": "Split string into list"
+  },
+  "Sprig Date": {
+    "prefix": "now",
+    "body": [
+      "{{ now | date \"${1:2006-01-02}\" }}"
+    ],
+    "description": "Format current date"
+  },
+  "Sprig B64enc": {
+    "prefix": "b64enc",
+    "body": [
+      "{{ ${1:.value} | b64enc }}"
+    ],
+    "description": "Base64 encode"
+  },
+  "Sprig B64dec": {
+    "prefix": "b64dec",
+    "body": [
+      "{{ ${1:.value} | b64dec }}"
+    ],
+    "description": "Base64 decode"
+  },
+  "Sprig Coalesce": {
+    "prefix": "coalesce",
+    "body": [
+      "{{ coalesce ${1:.value1} ${2:.value2} \"${3:default}\" }}"
+    ],
+    "description": "Return first non-empty value"
+  },
+  "Sprig Ternary": {
+    "prefix": "ternary",
+    "body": [
+      "{{ ternary \"${1:true-value}\" \"${2:false-value}\" ${3:condition} }}"
+    ],
+    "description": "Ternary operator"
+  }
+}
