@@ -66,6 +66,7 @@ export class KrakenDDiagnosticsProvider {
 
     // Validate enum values in JSON strings
     this.validateEnumValues(document, diagnostics);
+    this.validateTemplateJsonCommas(document, diagnostics);
 
     this.diagnosticCollection.set(document.uri, diagnostics);
   }
@@ -134,6 +135,89 @@ export class KrakenDDiagnosticsProvider {
       .map(item => item.name);
   }
 
+  private validateTemplateJsonCommas(document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {
+    if (!document.fileName.endsWith('.json.tmpl')) {
+      return;
+    }
+
+    const rawLines = document.getText().split('\n');
+    const cleanedLines = rawLines.map(line => this.cleanTemplateLine(line));
+
+    for (let i = 0; i < cleanedLines.length; i++) {
+      const line = cleanedLines[i];
+      if (!line) {
+        continue;
+      }
+
+      const trimmed = line.trim();
+      if (!trimmed || trimmed === ',') {
+        continue;
+      }
+
+      if (!this.isJsonPropertyLine(trimmed)) {
+        continue;
+      }
+
+      if (this.lineAllowsNoComma(trimmed)) {
+        continue;
+      }
+
+      const nextIndex = this.findNextNonEmptyLine(cleanedLines, i + 1);
+      if (nextIndex === -1) {
+        continue;
+      }
+
+      const nextLine = cleanedLines[nextIndex].trim();
+      if (nextLine === ',') {
+        continue;
+      }
+
+      if (nextLine.startsWith('"')) {
+        const range = new vscode.Range(
+          new vscode.Position(i, Math.max(rawLines[i].length - 1, 0)),
+          new vscode.Position(i, rawLines[i].length)
+        );
+
+        const diagnostic = new vscode.Diagnostic(
+          range,
+          'Possible missing comma before next JSON property',
+          vscode.DiagnosticSeverity.Error
+        );
+
+        diagnostic.source = 'Template JSON';
+        diagnostic.code = 'missing-comma';
+        diagnostics.push(diagnostic);
+      }
+    }
+  }
+
+  private cleanTemplateLine(line: string): string {
+    const templateOnly = /^\s*\{\{[\s\S]*\}\}\s*$/.test(line);
+    if (templateOnly) {
+      return line.includes(',') ? ',' : '';
+    }
+
+    const cleaned = line.replace(/\{\{[\s\S]*?\}\}/g, '0');
+    return cleaned.trim() ? cleaned : '';
+  }
+
+  private isJsonPropertyLine(line: string): boolean {
+    return /"\s*[^"]+"\s*:/.test(line);
+  }
+
+  private lineAllowsNoComma(line: string): boolean {
+    return /[{\[,]\s*$/.test(line);
+  }
+
+  private findNextNonEmptyLine(lines: string[], start: number): number {
+    for (let i = start; i < lines.length; i++) {
+      if (lines[i].trim()) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   private levenshteinDistance(str1: string, str2: string): number {
     const matrix: number[][] = [];
 
@@ -166,4 +250,3 @@ export class KrakenDDiagnosticsProvider {
     this.diagnosticCollection.dispose();
   }
 }
-

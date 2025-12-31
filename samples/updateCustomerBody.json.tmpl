@@ -1,0 +1,148 @@
+{
+  "currency": "AUD",
+  "country" : "AU",
+  {{- if index .req_params "JWT.customerId" }}
+  "customerId": "{{ index .req_params "JWT.customerId" }}",
+  {{- else }}
+  "anonymousId": "{{ index .req_params "AnonymousId" }}",
+  {{- end }}
+  {{- if index .req_params "JWT.email" }}
+  "customerEmail": "{{ index .req_params "JWT.email" }}",
+  {{- end }}
+  "store": {
+    "typeId": "store",
+    "key": "pc-au"
+  },
+  "lineItems": [
+  {{- $first := true }}
+    {{- range .req_body.lineItems }}
+    {{- if not $first }},{{- end }}
+    {
+      "sku": "{{ .sku }}",
+      "quantity": {{ .quantity }},
+      "distributionChannel": {
+        "typeId": "channel",
+        "key": "current-price"
+      },
+      "supplyChannel": {
+        "typeId": "channel",
+        "key": "4-eastern-creek-wh"
+      },
+      "custom": {
+        "type": {
+          "typeId": "type",
+          "key": "pet-circle-line-item"
+        },
+        "fields": {
+          "is-ad": {{ .isAD }},
+          "frequency": {{ .frequency }}
+        }
+      }
+    }
+    {{- $first = false }}
+    {{- end }}
+  ],
+  "shippingAddress": {
+    {{- if .req_body.shippingAddress.firstName }}
+      "firstName": "{{ .req_body.shippingAddress.firstName }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.lastName }}
+      "lastName": "{{ .req_body.shippingAddress.lastName }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.mobile }}
+      "mobile": "{{ .req_body.shippingAddress.mobile }}",
+      "phone": "{{ .req_body.shippingAddress.mobile }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.email }}
+      "email": "{{ .req_body.shippingAddress.email }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.building }}
+      "building": "{{ .req_body.shippingAddress.building }}",
+    {{- end }}
+    "country" : "AU",
+    {{- if .req_body.shippingAddress.city }}
+      "city": "{{ .req_body.shippingAddress.city }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.apartment }}
+      "apartment": "{{ .req_body.shippingAddress.apartment }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.streetName }}
+      "streetName": "{{ .req_body.shippingAddress.streetName }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.streetNumber }}
+      "streetNumber": "{{ .req_body.shippingAddress.streetNumber }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.state }}
+      "state": "{{ .req_body.shippingAddress.state }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.additionalAddressInfo }}
+      "additionalAddressInfo": "{{ .req_body.shippingAddress.additionalAddressInfo }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.additionalStreetInfo }}
+      "additionalStreetInfo": "{{ .req_body.shippingAddress.additionalStreetInfo }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.postalCode }}
+      "postalCode": "{{ .req_body.shippingAddress.postalCode }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.region }}
+      "region": "{{ .req_body.shippingAddress.region }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.company }}
+      "company": "{{ .req_body.shippingAddress.company }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.city }}
+      "city": "{{ .req_body.shippingAddress.city }}",
+    {{- end }}
+    {{- if .req_body.shippingAddress.pOBox }}
+      "pOBox": "{{ .req_body.shippingAddress.pOBox }}",
+    {{- end }}
+    "custom": {
+      "type": {
+        "typeId": "type",
+        "key": "pet-circle-address"
+      },
+      "fields": {
+        {{- if .req_body.shippingAddress.deliveryCode }}
+          "delivery-code": "{{ .req_body.shippingAddress.deliveryCode }}",
+        {{- end }}
+        {{- if .req_body.shippingAddress.hasPOBox }}
+          "has-po-box": {{ .req_body.shippingAddress.hasPOBox }},
+        {{- end }}
+        {{- if .req_body.shippingAddress.label }}
+          "label": "{{ .req_body.shippingAddress.label }}",
+        {{- end }}
+        {{- if .req_body.shippingAddress.levelNumber }}
+          "level-number": "{{ .req_body.shippingAddress.levelNumber }}",
+        {{- end }}
+        {{- if .req_body.shippingAddress.addressFull }}
+          "address-full": "{{ .req_body.shippingAddress.addressFull }}",
+        {{- end }}
+        {{- if .req_body.shippingAddress.pOBoxAddress }}
+          "po-box-address": "{{ .req_body.shippingAddress.pOBoxAddress }}",
+        {{- end }}
+        {{- if eq .req_body.shippingAddress.verified true }}
+          "verified": "true",
+        {{- else }}
+          "verified": "false",
+        {{- end }}
+        "delivery-zone-id": "{{ .req_body.shippingAddress.deliveryZoneId }}"
+      }
+    }
+  },
+  "custom": {
+    "type": {
+      "typeId": "type",
+      "key": "pet-circle-order"
+    },
+    "fields": {
+      {{- if .req_body.paymentMethodId }}
+        "payment-method-id": "{{ .req_body.paymentMethodId }}",
+      {{- end }}
+      {{- if .req_body.paymentMethodType }}
+        "payment-method-type": "{{ .req_body.paymentMethodType }}",
+      {{- end }}
+      "tx-id": "{{ randAlphaNum 8 }}"
+    }
+  }
+}
+
